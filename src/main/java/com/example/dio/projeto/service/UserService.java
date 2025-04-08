@@ -18,10 +18,12 @@ public class UserService {
     private static final Long UNCHANGEABLE_USER_ID = 1L;
 
     private final UserRepository userRepository;
+    private final CardService cardService;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, CardService cardService) {
         this.userRepository = userRepository;
+        this.cardService = cardService;
     }
 
     @Transactional(readOnly = true)
@@ -34,18 +36,18 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found with ID: " + id));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = false)
     public User create(User user) {
         ofNullable(user).orElseThrow(() -> new BusinessException("User to create must not be null."));
         ofNullable(user.getAccount()).orElseThrow(() -> new BusinessException("User account must not be null."));
         ofNullable(user.getCard()).orElseThrow(() -> new BusinessException("User card must not be null."));
 
         this.validateChangeableId(user.getId(), "created");
+
+        cardService.validateCard(user.getCard());
+
         if (userRepository.existsByAccountNumber(user.getAccount().getNumber())) {
             throw new BusinessException("This account number already exists.");
-        }
-        if (userRepository.existsByCardNumber(user.getCard().getNumber())) {
-            throw new BusinessException("This card number already exists.");
         }
 
         return userRepository.save(user);
