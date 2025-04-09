@@ -171,6 +171,6 @@ http://localhost:8080/swagger-ui.html
 - 🛡️ **Controle de acesso com roles** (admin, user, etc.)
 - 🧪 **Testes automatizados** com JUnit e Mockito
 - 🗂️ **Versionamento da API**
-- 🔗 **Integração com front-end** em React ou Vue
+- 🔗 **Integração com front-end** em React ou Angular
 
 
